@@ -8,14 +8,20 @@ void setup() {
   Wire.begin();           
   Serial.begin(9600);     
   Wire.beginTransmission(MPU_addr);
+  /*
+   * Configura registro 0x6B (CLKSEL[2:0]) para usar el oscilador interno
+   */
   Wire.write(0x6B);       
-  Wire.write(0);          
+  Wire.write(0);
   Wire.endTransmission(true);
 }
 
 void loop() {
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x43);       
+  /*
+   * 
+   */
   Wire.endTransmission(false);
   Wire.requestFrom(MPU_addr, 6, true); 
 
