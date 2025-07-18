@@ -41,9 +41,9 @@ def draw_landmarks_on_image(rgb_image, detection_result):
         image=annotated_image,
         landmark_list=face_landmarks_proto,
         connections=mp.solutions.face_mesh.FACEMESH_IRISES,
-          landmark_drawing_spec=None,
-          connection_drawing_spec=mp.solutions.drawing_styles
-          .get_default_face_mesh_iris_connections_style())
+        landmark_drawing_spec=None,
+        connection_drawing_spec=mp.solutions.drawing_styles
+        .get_default_face_mesh_iris_connections_style())
 
   return annotated_image
 
@@ -68,7 +68,17 @@ while True:
     if ret: mp_frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
     detection_result = detector.detect(mp_frame)
     annotated_image = draw_landmarks_on_image(mp_frame.numpy_view(), detection_result)
-    annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR)
+    landmark_list = detection_result.face_landmarks
+    left_eye = 0
+    right_eye = 0
+    if len(landmark_list) >= 1:
+        left_eye = np.sqrt((landmark_list[0][159].x - landmark_list[0][145].x)**2 +(landmark_list[0][159].y - landmark_list[0][145].y)**2 + (landmark_list[0][159].z - landmark_list[0][145].z)**2)
+        right_eye = np.sqrt((landmark_list[0][386].x - landmark_list[0][374].x)**2 +(landmark_list[0][386].y - landmark_list[0][374].y)**2 +(landmark_list[0][386].z - landmark_list[0][374].z)**2)
+        #print(f'Left eye: {left_eye}; Right eye: {right_eye}')
+    #annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR)
+    avg = np.mean(np.array([left_eye, right_eye])) 
+    if avg <= 0.03 and avg > 0.01:
+        print("Eyes closed")
     cv2.imshow('Press \'q\' to exit', annotated_image)
     if cv2.waitKey(1) == ord('q'):
         break

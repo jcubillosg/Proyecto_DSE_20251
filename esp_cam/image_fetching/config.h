@@ -53,6 +53,8 @@
 #define PCLK_GPIO_NUM  13
 #endif
 
+void tester_func(void);
+
 esp_err_t camera_setup(void){
   /*
    * FRAMESIZE_UXGA (1600 x 1200)
